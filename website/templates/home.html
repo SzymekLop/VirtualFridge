@@ -1,0 +1,49 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<h1 align="center">Notifications</h1>
+<ul class="list-group list-group-flush" id="notifications">
+  {% if not user.fridge.check_products()%}
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">Everything is fresh!</h1>
+      <p class="lead">There are no notifications to display, everything is fine. Have a nice day!</p>
+    </div>
+  </div>
+  {% else %}
+  {% for product in user.fridge.products %}
+  {% if product.check() < 0 %}
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <li class="list-group-item">
+    {{ notification }}
+<!--    <button type="button" class="close" onClick="deleteNote({{ note.id }})">-->
+<!--      <span aria-hidden="true">&times;</span>-->
+<!--    </button>-->
+  </li>
+  {% endif %}   {% endfor %}   {% endif %}
+</ul>
+<!--<form method="POST">-->
+<!--  <textarea name="note" id="note" class="form-control"></textarea>-->
+<!--  <br />-->
+<!--  <div align="center">-->
+<!--    <button type="submit" class="btn btn-primary">Add Note</button>-->
+<!--  </div>-->
+<!--</form>-->
+{% endblock %}

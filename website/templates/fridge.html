@@ -1,0 +1,141 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <h1 align="center">Fridge</h1>
+<!--      <picture>-->
+<!--        <source srcset="..." type="image/svg+xml">-->
+<!--        <img src="..." class="img-fluid img-thumbnail" alt="...">-->
+<!--      </picture>-->
+    </div>
+    <div class="col-sm">
+      <h1 align="center">Products</h1>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProduct">
+        Add new product
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="addProduct" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addProductLabel">Select product type</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProduct">
+                Add new product with date
+              </button>
+              <!-- Modal -->
+              <div class="modal fade" id="addDateProduct" tabindex="-1" aria-labelledby="addDateProductLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addDateProductLabel">New product</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form method="POST">
+                        <label for="productName" class="form-label">Product name</label>
+                        <input type="text" class="form-control" id="productName" placeholder="First name" value="Banana" required>
+                        <label for="amount" class="form-label">Product name</label>
+                        <input type="number" class="form-control" id="amount" placeholder="three" value="3" required>
+                        <label class="form-label">Expiration date</label>
+                        <div>
+                          {{ form.csrt_token }}
+                          {{ form.startdate.label }} {{form.startdate(class='datepicker')}} {{form.hidden_tag()}}
+                        <button type="button" class="btn btn-success" onClick="form.submit()">Submit</button>
+                        </div>
+                        <div align="right">
+                          <button type="submit" class="btn btn-primary">Add Note</button>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProduct">
+                  Add new fresh product
+              </button>
+              <!-- Modal -->
+              <div class="modal fade" id="addFreshProduct" tabindex="-1" aria-labelledby="addFreshProductLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addFreshProductLabel">Modal title</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+                      <form method="POST">
+
+
+                        <div align="center">
+                          <button type="submit" class="btn btn-primary">Add Note</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProduct">
+                    Add new non-expiring product
+              </button>
+              <!-- Modal -->
+              <div class="modal fade" id="addNonExpProduct" tabindex="-1" aria-labelledby="addNonExpProductLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="addNonExpProductLabel">Modal title</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+                      <form method="POST">
+
+
+                        <div align="center">
+                          <button type="submit" class="btn btn-primary">Add Note</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+<!--              <button type="button" class="btn btn-success">Save changes</button>-->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        {% for products in user.fridge.products %}
+        <li class="list-group-item">
+          {{ product.notification() }}
+            <button type="button" class="close" onClick="deleteProduct({{ note.id }})">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </li>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    $('#datetimepicker1').datetimepicker();
+});
+</script>
+{% endblock %}
