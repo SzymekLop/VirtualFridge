@@ -32,22 +32,26 @@ class Product(db.Model):
     def __str__(self):
         return "%d %s of %s" % (self.amount, self.unit, self.name)
 
+    # decrease amount of product by one
     def use(self):
         self.amount = self.amount - 1
         if self.amount == 0:
             db.session.delete(self)
         db.session.commit()
 
+    # will return number deciding what notification to give
     @abstractmethod
     def check(self):
         pass
 
+    # will return notification
     @abstractmethod
     def notification(self):
         pass
 
 
 class DateProduct(Product):
+    # date of expire
     exp_date = db.Column(db.Date)
 
     __mapper_args__ = {
@@ -81,6 +85,7 @@ class DateProduct(Product):
 
 
 class FreshProduct(Product):
+    # date of bought
     bought = db.Column(db.Date)
 
     __mapper_args__ = {
@@ -142,6 +147,7 @@ class Fridge(db.Model):
         else:
             return self.products[index].amount
 
+    # return list of notification for products that need attention
     def check_products(self):
         res = list()
         for idp, product in enumerate(self.products):
@@ -158,12 +164,14 @@ class ShoppingList(db.Model):
     products = db.relationship('Product')
     name = db.Column(db.String)
 
+    # add product to list
     def add_position(self, product):
         if isinstance(product, Product):
             self.products.append((product, 0))
         else:
             raise TypeError("You can only buy products")
 
+    # check if all planed pieces are bought
     def bought(self, index, amount=0):
         if self.products[index].amount != 0:
             if amount >= self.products[index].amount:
@@ -174,6 +182,7 @@ class ShoppingList(db.Model):
         else:
             self.products[index] = (self.products[index], 1)
 
+    # return list of information rather all planed products are bought on not
     def check(self):
         res = list()
         for idp, position in enumerate(self._products):
