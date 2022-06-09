@@ -4,7 +4,7 @@ from wtforms import validators, SubmitField
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from flask_wtf import FlaskForm
-from.modules import *
+from .modules import *
 
 views = Blueprint('views', __name__)
 
@@ -24,6 +24,18 @@ def delete_product():
         if Fridge.query.get(product.fridge_id).user_id == current_user.id:
             db.session.delete(product)
             db.session.commit()
+            flash('Product removed.', category='warning')
+    return jsonify({})
+
+
+@views.route('/use-product', methods=['POST'])
+def use_product():
+    product = json.loads(request.data)
+    product_id = product['productId']
+    product = Product.query.get(product_id)
+    if product:
+        if Fridge.query.get(product.fridge_id).user_id == current_user.id:
+            product.use()
     return jsonify({})
 
 
@@ -36,6 +48,7 @@ def delete_list_product():
         if ShoppingList.query.get(product.list_id).user_id == current_user.id:
             db.session.delete(product)
             db.session.commit()
+            flash('Product removed.', category='warning')
     return jsonify({})
 
 
@@ -48,12 +61,14 @@ def delete_list():
         if shopping.user_id == current_user.id:
             db.session.delete(shopping)
             db.session.commit()
+            flash('Shopping list removed.', category='warning')
     return jsonify({})
 
 
 @views.route('/fridge', methods=['GET', 'POST'])
 def fridge():
     form = DateForm()
+
     if request.method == 'POST':
         if "date" in request.form:
             name = request.form['date_product_name']
@@ -113,7 +128,8 @@ def fridge():
 @views.route('/shopping-lists', methods=['GET', 'POST'])
 def shopping_lists():
     if request.method == 'POST':
-        new_list = ShoppingList(user_id=current_user.id)
+        name = request.form['name']
+        new_list = ShoppingList(user_id=current_user.id, name=name)
         db.session.add(new_list)
         db.session.commit()
         flash('Shopping list added!', category='success')
@@ -123,7 +139,12 @@ def shopping_lists():
 @views.route('/shopping-lists/list/<list_id>', methods=['GET', 'POST'])
 def shopping_list(list_id):
     my_list = ShoppingList.query.get(list_id)
+    names = []
+    for product in Fridge.query.get(current_user.fridge.id).products:
+        names.append(product.name)
+    form = DateForm()
     place = 'list.html'
+    print(names)
     if request.method == 'POST':
         if 'add_product' in request.form:
             name = request.form['name']
@@ -145,12 +166,36 @@ def shopping_list(list_id):
                     new_product = NonExpProduct(name=name, amount=amount, unit=unit)
                     my_list.products.append(new_product)
                     db.session.add(new_product)
+                db.session.commit()
         elif 'update' in request.form:
-            place = 'shopping-lists.html'
-            print('dziala')
+            if my_list.user_id == current_user.id:
+                place = 'shopping-lists.html'
+                for product in my_list.products:
+                    if request.form['toFridge' + str(product.id)] == "True":
+                        notify = request.form['notify' + str(product.id)]
+                        amount = request.form['amount' + str(product.id)]
+                        if product.type == 'DateProduct':
+                            product.exp_date = datetime.datetime. \
+                                strptime(request.form['exp_date' + str(product.id)], "%Y-%m-%d")
+                        elif product.type == 'FreshProduct':
+                            product.bought = datetime.date.today()
+                        if amount != "" and amount is not None:
+                            product.amount = int(amount)
+                        product.notify = int(notify)
+                        product.fridge_id = current_user.fridge.id
+                        product.list_id = None
+                        db.session.commit()
+                        flash('Product moved to the fridge.', category='success')
+                        print(my_list.products)
+                        if not my_list.products:
+                            db.session.delete(my_list)
+                            db.session.commit()
+    return render_template(place, user=current_user, list=my_list, form=form, names=names)
 
-        db.session.commit()
-    return render_template(place, user=current_user, list=my_list)
+
+@views.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html', user=current_user)
 
 
 class DateForm(FlaskForm):

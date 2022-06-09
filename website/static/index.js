@@ -7,6 +7,15 @@ function deleteProduct(productId) {
   });
 }
 
+function useProduct(productId) {
+  fetch("/use-product", {
+    method: "POST",
+    body: JSON.stringify({ productId: productId }),
+  }).then((_res) => {
+    window.location.href = "/fridge";
+  });
+}
+
 function deleteListProduct(productId, listId) {
   fetch("/shopping-list/delete-product", {
     method: "POST",

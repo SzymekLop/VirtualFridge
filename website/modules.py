@@ -34,6 +34,9 @@ class Product(db.Model):
 
     def use(self):
         self.amount = self.amount - 1
+        if self.amount == 0:
+            db.session.delete(self)
+        db.session.commit()
 
     @abstractmethod
     def check(self):
@@ -55,14 +58,20 @@ class DateProduct(Product):
         if self.exp_date is None:
             return None
         else:
-            return (self.exp_date - datetime.date.today()).days
+            days = (self.exp_date - datetime.date.today()).days
+            if days < 0:
+                return -1
+            elif days <= self.notify:
+                return 0
+            else:
+                return 1
 
     def notification(self):
-        days = self.check()
+        days = (self.exp_date - datetime.date.today()).days
         if days < -1:
-            return "Your %s expired %d days ago :(" % (self.__str__(), days)
+            return "Your %s expired %d days ago" % (self.__str__(), abs(days))
         elif days < 0:
-            return "Your %s expired yesterday :(" % self.__str__()
+            return "Your %s expired yesterday" % self.__str__()
         elif days == 0:
             return "Your %s expires today" % self.__str__()
         elif days == 1:
@@ -82,14 +91,18 @@ class FreshProduct(Product):
         if self.bought is None:
             return None
         else:
-            return (self.bought - datetime.date.today()).days + self.notify
+            return 1 if (datetime.date.today() - self.bought).days <= self.notify else -1
 
     def notification(self):
-        days = self.check()
+        days = self.notify - (datetime.date.today() - self.bought).days
         if days < 0:
             return "You should check your %s before eating it" % self.__str__()
-        else:
+        elif days == 0:
             return "Your %s should be fresh" % self.__str__()
+        elif days == 1:
+            return "Your %s should be fresh for 1 more day" % self.__str__()
+        else:
+            return "Your %s should be fresh for %d more days" % (self.__str__(), days)
 
 
 class NonExpProduct(Product):
@@ -143,6 +156,7 @@ class ShoppingList(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     products = db.relationship('Product')
+    name = db.Column(db.String)
 
     def add_position(self, product):
         if isinstance(product, Product):

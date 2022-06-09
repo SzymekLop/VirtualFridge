@@ -2,14 +2,15 @@
 {% block content%}
 <div class="container">
   <div class="row">
-    <div class="col-sm">
+    <div class="col">
       <h1 align="center">Fridge</h1>
-<!--      <picture>-->
-<!--        <source srcset="..." type="image/svg+xml">-->
-<!--        <img src="..." class="img-fluid img-thumbnail" alt="...">-->
-<!--      </picture>-->
     </div>
-    <div class="col-sm" align="center">
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <img src="/static/fridge.png" class="img-fluid" alt="Responsive image">
+    </div>
+    <div class="col-8" align="center">
       <h1 align="center">Products</h1>
       <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addDateProduct">
         Date Product
@@ -43,10 +44,10 @@
                 <label class="form-label">Expiration date</label>
                 <div>
                   {{ form.csrt_token }}
-                  {{ form.exp_date.label }} {{form.exp_date(class='datepicker')}} {{form.hidden_tag()}}<button type="button" class="btn btn-success" onClick="form.submit()">Submit</button>
+                  {{ form.exp_date.label }} {{form.exp_date(class='datepicker')}} {{form.hidden_tag()}}
                 </div>
                 <label for="date_notify" class="form-label">Days to notify before expire date</label>
-                <input type="number" class="form-control" id="date_notify" name="date_notify" placeholder="3" value="3">
+                <input type="number" class="form-control" id="date_notify" name="date_notify" placeholder="e.g. 3" value="3">
 
               </div>
               <div class="modal-footer">
@@ -77,9 +78,9 @@
             <form method="POST">
               <div class="modal-body">
                 <label for="fresh_name" class="form-label">Product name</label>
-                <input type="text" class="form-control" id="fresh_name" name="fresh_name" placeholder="Banana" required>
+                <input type="text" class="form-control" id="fresh_name" name="fresh_name" placeholder="e.g. Banana" required>
                 <label for="fresh_amount" class="form-label">Amount</label>
-                <input type="number" class="form-control" id="fresh_amount" name="fresh_amount" placeholder="2" required>
+                <input type="number" class="form-control" id="fresh_amount" name="fresh_amount" placeholder="e.g. 2" required>
                 <label class="form-label">Unit</label>
                 <li class="nav-item">
                   <select class="custom-select custom-select-lg mb-3" id="fresh_unit" name="fresh_unit">
@@ -123,11 +124,11 @@
               <form method="POST">
                 <div class="modal-body">
                   <label for="non_name" class="form-label">Product name</label>
-                  <input type="text" class="form-control" id="non_name" name="non_name" placeholder="Pasta" required>
+                  <input type="text" class="form-control" id="non_name" name="non_name" placeholder="e.g. Pasta" required>
                   <label for="non_amount" class="form-label">Amount</label>
-                  <input type="number" class="form-control" id="non_amount" name="non_amount" placeholder="4" required>
+                  <input type="number" class="form-control" id="non_amount" name="non_amount" placeholder="e.g. 4" required>
                   <label for="non_notify" class="form-label">Units left to notify</label>
-                  <input type="number" class="form-control" id="non_notify" name="non_notify" placeholder="2" required>
+                  <input type="number" class="form-control" id="non_notify" name="non_notify" placeholder="e.g. 2" required>
                   <label class="form-label">Unit</label>
                   <li class="nav-item">
                     <select class="custom-select custom-select-lg mb-3" id="non_unit" name="non_unit">
@@ -150,15 +151,34 @@
           </div>
         </div>
       </div>
+      <div>
+        <p>
+
+        </p>
+      </div>
       <ul class="list-group list-group-flush" id="products">
+        <div class="shadow-lg rounded">
         {% for product in user.fridge.products %}
         <li class="list-group-item">
-          {{ product.notification() }}
-          <button type="button" class="close" onClick="deleteProduct({{ product.id }})">
-            Remove
-          </button>
+          <div class="row">
+            <div class="col-8">
+              <!--          {#{{ product.__str__() }}#}-->
+              {{ product.notification() }}
+            </div>
+            <div class="col-1">
+              <button type="button" class="close" onClick="useProduct({{ product.id }})">
+                Use
+              </button>
+            </div>
+            <div class="col-2">
+              <button type="button" class="close" onClick="deleteProduct({{ product.id }})">
+                Remove
+              </button>
+            </div>
+          </div>
         </li>
         {% endfor %}
+        </div>
       </ul>
     </div>
   </div>

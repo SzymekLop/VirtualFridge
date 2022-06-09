@@ -24,7 +24,8 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-success">
-      <a class="navbar-brand" href="#">Virtual fridge</a>
+      <a class="navbar-brand" href="#"><strong>Virtual fridge</strong></a>
+<!--      <img src="/static/fridge.png" class="img-fluid" alt="Responsive image">-->
       <button
         class="navbar-toggler"
         type="button"
@@ -38,35 +39,72 @@
           {% if user.is_authenticated %}
           <a class="nav-item nav-link" id="home" href="/">Home</a>
           <a class="nav-item nav-link" id="fridge" href="/fridge">Fridge</a>
-          <a class="nav-item nav-link" id="shopping_lists" href="/shopping-lists">Shopping lists</a>
+          <a class="nav-item nav-link" id="shopping_lists" href="/shopping-lists">Shopping</a>
+          <a class="nav-item nav-link" id="about" href="/about">About</a>
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           {% else %}
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+          <a class="nav-item nav-link" id="about_info" href="/about">About</a>
           {% endif %}
         </div>
       </div>
     </nav>
 
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %} {% if category ==
-    'error' %}
-    <div class="alert alert-danger alter-dismissable fade show" role="alert">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    {% if category == 'error' %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <span type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
       {{ message }}
-      <button type="button" class="close" data-dismiss="alert">
-        <span aria-hidden="true">&times;</span>
-      </button>
+    </div>
+    {% elif category == 'info' %}
+    <div class="alert alert-info alert-dismissible" role="alert">
+      <span type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+      {{ message }}
+    </div>
+    {% elif category == 'warning' %}
+    <div class="alert alert-warning alert-dismissible" role="alert">
+      <span type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+      {{ message }}
     </div>
     {% else %}
-    <div class="alert alert-success alter-dismissable fade show" role="alert">
+    <div class="alert alert-success alert-dismissible" role="alert">
+      <span type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
       {{ message }}
-      <button type="button" class="close" data-dismiss="alert">
-        <span aria-hidden="true">&times;</span>
-      </button>
     </div>
-    {% endif %} {% endfor %} {% endif %} {% endwith %}
-
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     {% block content %} {% endblock %}
+    <div class="row sticky-bottom">
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    </div>
+    <div class="container sticky-bottom">
+    <div class="row" align="center">
+      <p>
+        Are you happy with our app? Have you already saved tons of food from being wasted?
+        Why don't you consider donating&nbsp;
+        <a href="https://thp.org/?fbclid=IwAR3oVmtSvla1R2VhJBE8OnRnHyk2qlliJmZrGTKf6tVSvc2VpDGFoQt4A6U">
+          The Hunger Project.
+        </a>It is a global, non-profit, strategic organization committed to the sustainable end of world hunger.
+      </p>
+    </div>
+      <div class="navbar fixed-bottom" style="font-size: 1rem; color: #e2e2e2">
+      @2022 Szymon Łopuszyński
+      <a href="https://zero-waste.pl/czym-jest-zero-waste/?gclid=CjwKCAjwy_aUBhACEiwA2IHHQAvVPQJ-IP60aBvmmhkcZYdtR1Zfrx_zhrnDdsNP9arJ35QJGy5JdxoCpkoQAvD_BwE"
+         class="open" target="_blank" role="button" aria-pressed="true" style="font-size: 1rem; color: #e2e2e2">
+        Polskie Stowarzyszeni Zero-waste
+      </a>
+    </div>
+    </div>
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

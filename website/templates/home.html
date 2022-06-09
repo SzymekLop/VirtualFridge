@@ -1,20 +1,35 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
-<h1 align="center">Notifications</h1>
-<ul class="list-group list-group-flush" id="notifications">
-  {% if not user.fridge.check_products()%}
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <h1 class="display-4">Everything is fresh!</h1>
-      <p class="lead">There are no notifications to display, everything is fine. Have a nice day!</p>
+<div class="container">
+  <h1 align="center">Notifications</h1>
+  <ul class="list-group list-group-flush" id="notifications">
+    {% if not user.fridge.check_products()%}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Everything is fresh!</h1>
+        <p class="lead">There are no notifications to display, everything is fine. Have a nice day {{ user.first_name.capitalize() }}!</p>
+      </div>
     </div>
-  </div>
-  {% else %}
-  {% for product in user.fridge.products %}
-  {% if product.check() < 0 %}
-  <li class="list-group-item">
-    {{ product.notification() }}
-  </li>
-  {% endif %}   {% endfor %}   {% endif %}
-</ul>
+    {% else %}
+    {% for product in user.fridge.products %}
+    {% if product.check() == 0 %}
+    <li class="list-group-item">
+      <div class="alert alert-warning shadow" role="alert">
+        {{ product.notification() }}
+      </div>
+    </li>
+    {% elif product.check() < 0 %}
+    <li class="list-group-item">
+      <div class="alert alert-danger shadow" role="alert">
+        {{ product.notification() }}
+        {% if product.type != "NonExpProduct" %}
+        <button type="button" class="close" onClick="deleteProduct({{ product.id }})">
+          Remove
+        </button>
+        {% endif %}
+      </div>
+    </li>
+    {% endif %}   {% endfor %}   {% endif %}
+  </ul>
+</div>
 {% endblock %}

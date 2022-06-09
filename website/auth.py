@@ -42,7 +42,23 @@ def sign_up():
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-
+        # sprawdzanie spelnienia wymagan przez haslo
+        special = ['!', '@', '#', '$', '%', '^', '&', '*', '~']
+        is_special = False
+        is_upper = False
+        is_lower = False
+        for char in special:
+            is_special = char in password1
+            if is_special:
+                break
+        for char in password1:
+            is_upper = char.isupper()
+            if is_upper:
+                break
+        for char in password1:
+            is_lower = char.islower()
+            if is_lower:
+                break
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists.', category='error')
@@ -54,10 +70,17 @@ def sign_up():
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
+        elif not is_special:
+            flash('Password must contains special character. Special characters: !, @, #, $, %, ^, &, *, ~.',
+                  category='error')
+        elif not is_upper:
+            flash('Password must contains capital letter.', category='error')
+        elif not is_lower:
+            flash('Password must contains lower case letter.', category='error')
         else:
-
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(
-                password1, method='sha256'))
+            # wszystkie warunki spelnone nowy uzytkownik zostaje dodany
+            new_user = User(email=email, first_name=first_name,
+                            password=generate_password_hash(password1, method='sha256'))
             db.session.add(new_user)
             new_fridge = Fridge(user_id=new_user.id)
             new_user.fridge = new_fridge
